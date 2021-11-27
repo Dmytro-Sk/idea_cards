@@ -1,5 +1,6 @@
 {% extends "home_page/base.html" %}
 {% load crispy_forms_tags %}
+{% load socialaccount %}
 {% block title %}Login{% endblock title%}
 
 {% block content %}
@@ -19,5 +20,15 @@
                 Need An Account? <a class="ml-2" href="{% url 'users:register' %}">Sign Up Now</a>
             </small>
         </div>
+        <h4 class="text-center mt-2">OR</h4>
+        {% get_providers as socialaccount_providers %}
+        {% for provider in socialaccount_providers %}
+            <p>Sign In with
+                <a title="{{provider.name}}" class="socialaccount_provider {{provider.id}}"
+                   href="{% provider_login_url provider.id process=process scope=scope auth_params=auth_params %}">
+                   {{provider.name}} account
+                </a>
+            </p>
+        {% endfor %}
     </div>
 {% endblock content %}
