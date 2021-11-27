@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+{% block head %}
+
+    {% block meta %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% endblock meta %}
+
+    {% block style %}
+        <link rel="stylesheet" type="text/css" href="{% static 'home_page/css/bootstrap.min.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'home_page/css/styles.css' %}">
+    {% endblock style %}
+
+    <title>{% block title %}Idea Card{% endblock title%}</title>
+{% endblock head %}
+</head>
+
+{% block body %}
+<body>
+    <div class="wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{#{% url 'home_page:home-page' %}#}">Idea Cards</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="{#{% url 'home_page:home-page' %}#}">
+                                <span class="fas fa-home"></span>&nbsp;Cards
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav mb-2 mb-lg-0 ms-auto">
+                        {% if not user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="{#{% url 'users:login' %}#}">
+                                    <span class="fas fa-sign-in-alt"></span>&nbsp;Login
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" aria-current="page" href="{#{% url 'users:register' %}#}">
+                                    <span class="fas fa-user-plus"></span>&nbsp;Register
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{#{% url 'users:profile' %}#}">
+                                    <span class="fas fa-user-edit"></span>&nbsp;Profile
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{#{% url 'users:logout' %}#}">
+                                    <span class="fas fa-sign-out-alt"></span>&nbsp;Logout
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="container mt-4">
+        {% block content %}{% endblock content %}
+    </div>
+
+    {% block script %}
+        <script src="{% static 'home_page/js/bootstrap.bundle.min.js' %}"></script>
+    {% endblock script %}
+
+</body>
+{% endblock body %}
+</html>
