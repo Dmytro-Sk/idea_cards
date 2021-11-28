@@ -1,6 +1,9 @@
 from django.shortcuts import render
 from django.contrib import messages
 from django.shortcuts import redirect
+from rest_framework import viewsets
+from django.contrib.auth.models import User
+from .serializers import UserSerializer
 
 from .forms import UserRegisterForm
 
@@ -16,3 +19,8 @@ def register(request):
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
+
+
+class UserAPIView(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
