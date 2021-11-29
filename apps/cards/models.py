@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+import statistics
 
 
 class Card(models.Model):
@@ -14,6 +15,25 @@ class Card(models.Model):
     def __str__(self):
         return self.title
 
+    def count_ratings(self):
+        ratings = CardRating.objects.filter(card=self)
+        return len(ratings)
+
+    def get_avg_ratings(self):
+        ratings = CardRating.objects.filter(card=self)
+        if ratings:
+            return round(statistics.mean([rating.stars for rating in ratings]))
+        else:
+            return 0
+
+    def get_star_avg_range(self):
+        avg_rating = self.get_avg_ratings()
+        return range(avg_rating)
+
+    def get_star_rest_range(self):
+        avg_rating = self.get_avg_ratings()
+        return range(5-avg_rating)
+
 
 class CardRating(models.Model):
     card = models.ForeignKey(Card, on_delete=models.CASCADE)
@@ -22,3 +42,8 @@ class CardRating(models.Model):
 
     def __str__(self):
         return f'Rating for {self.card.title}'
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['card', 'star_from_user'], name='vote_constraint'),
+        ]
