@@ -1,0 +1,36 @@
+{% extends 'home_page/base.html' %}
+{% block title %}Cards{% endblock title%}
+
+{% block content %}
+    <div class="d-flex justify-content-between py-3">
+        <h2>Card List</h2>
+        <div class="pt-2">
+            <a href="{#{% url 'cards:card-add' %}#}" class="btn btn-success">New Card</a>
+        </div>
+    </div>
+    <div class="row">
+        {% for card in cards %}
+            <div class="col-lg-4">
+                <div class="card text-dark bg-light my-4 mx-3" style="height: 20rem;">
+                    <div class="card-body">
+                        <h5 class="card-title text-center mb-3">{{ card.title }}</h5>
+                        <p class="card-text">{{ card.body|truncatewords:20 }}</p>
+                    </div>
+                    <div class="card-body row align-items-end">
+                        <div class="d-flex justify-content-between text-muted">
+                            <a href="{#{% url 'cards:user-cards' card.author.username %}#}">
+                                {{ card.author|capfirst }}
+                            </a>
+                            <small>{{ card.pub_date|date:' F d, Y' }}</small>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="{#{% url 'cards:card-detail' card.id %}#}" class="btn btn-success">
+                            Read Card
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock content %}

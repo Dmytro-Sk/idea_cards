@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from django.views.generic.list import ListView
 
-# Create your views here.
+from .models import Card
+
+
+class CardListView(ListView):
+    model = Card
+    context_object_name = 'cards'
+    ordering = ['-pub_date']
