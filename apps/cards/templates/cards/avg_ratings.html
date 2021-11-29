@@ -1,0 +1,13 @@
+{% load static %}
+{% block extra_style %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'cards/css/styles.css' %}">
+{% endblock extra_style %}
+
+{% for _ in card.get_star_avg_range %}
+    <span class="fa fa-star checked"></span>
+{% endfor %}
+
+{% for _ in card.get_star_rest_range %}
+    <span class="fa fa-star"></span>
+{% endfor %}

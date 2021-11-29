@@ -23,6 +23,9 @@
                             </a>
                             <small>{{ card.pub_date|date:' F d, Y' }}</small>
                         </div>
+                        <div>
+                            <p>Average rating: {% include 'cards/avg_ratings.html' %}</p>
+                        </div>
                     </div>
                     <div class="card-footer text-center">
                         <a href="{#{% url 'cards:card-detail' card.id %}#}" class="btn btn-success">

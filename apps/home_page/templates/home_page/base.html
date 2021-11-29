@@ -13,6 +13,7 @@
         <link rel="stylesheet" type="text/css" href="{% static 'home_page/css/bootstrap.min.css' %}">
         <link rel="stylesheet" type="text/css" href="{% static 'home_page/css/styles.css' %}">
     {% endblock style %}
+    {% block extra_style %}{% endblock extra_style %}
 
     <title>{% block title %}Idea Card{% endblock title%}</title>
 {% endblock head %}
@@ -33,7 +34,7 @@
                     <ul class="navbar-nav mb-2 mb-lg-0">
                         <li class="nav-item">
                             <a class="nav-link" aria-current="page" href="{% url 'cards:card-list' %}">
-                                <span class="fas fa-home"></span>&nbsp;Cards
+                                <span></span>&nbsp;Cards
                             </a>
                         </li>
                     </ul>
