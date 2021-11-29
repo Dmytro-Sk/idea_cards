@@ -1,0 +1,19 @@
+{% extends 'home_page/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}New card{% endblock title%}
+
+{% block content %}
+    <h2 class="text-center py-3">New card</h2>
+    <div class="col-4 offset-4">
+        <div class="card text-dark bg-light p-3">
+            <form method="POST">
+            {% csrf_token %}
+                {{ form|crispy }}
+                <div class="card-footer text-center mt-2">
+                    <button class="btn btn-outline-success btn-sm" type="submit">Post</button>
+                    <a href="{% url 'cards:card-list' %}" class="btn btn-outline-secondary btn-sm">Back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

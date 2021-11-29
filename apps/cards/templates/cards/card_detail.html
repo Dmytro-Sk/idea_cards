@@ -1,0 +1,32 @@
+{% extends 'home_page/base.html' %}
+{% block title %}Card detail{% endblock title%}
+
+{% block content %}
+    <h2 class="text-center py-3">Card Detail</h2>
+    <div class="col-4 offset-4">
+        <div class="card text-dark bg-light">
+            <div class="card-body">
+                <h5 class="card-title text-center mb-3">{{ card.title }}</h5>
+                <p class="card-text">{{ card.body }}</p>
+            </div>
+            <div class="card-body row align-items-end">
+                <div class="d-flex justify-content-between text-muted">
+                    <a href="{#{% url 'cards:user-cards' card.author.username %}#}">
+                        {{ card.author|capfirst }}
+                    </a>
+                    <small>{{ card.pub_date|date:' F d, Y' }}</small>
+                </div>
+                <div>
+                    <p>Average rating: {% include 'cards/avg_ratings.html' %}</p>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                {% if object.author == user %}
+                    <a class="btn btn-outline-success btn-sm" href="{% url 'cards:card-update' card.id %}">Update</a>
+                    <a class="btn btn-outline-danger btn-sm" href="{% url 'cards:card-delete' card.id %}">Delete</a>
+                {% endif %}
+                <a href="{% url 'cards:card-list' %}" class="btn btn-outline-secondary btn-sm">Back</a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% extends "home_page/base.html" %}
+{% block title %}Delete confirmation{% endblock title%}
+
+{% block content %}
+    <h2 class="text-center py-3">Delete confirmation</h2>
+    <div class="col-4 offset-4">
+        <div class="card text-dark bg-light p-3">
+            <h5 class="card-title text-center mb-3">Are you sure you want to delete the post "{{ card.title }}"?</h5>
+            <form method="POST">
+            {% csrf_token %}
+                <div class="card-footer text-center mt-2">
+                    <button class="btn btn-outline-danger btn-sm" type="submit">Yes, Delete</button>
+                    <a href="{% url 'cards:card-detail' card.id %}" class="btn btn-outline-secondary btn-sm">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

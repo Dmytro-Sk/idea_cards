@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 import statistics
+from django.shortcuts import reverse
 
 
 class Card(models.Model):
@@ -33,6 +34,9 @@ class Card(models.Model):
     def get_star_rest_range(self):
         avg_rating = self.get_avg_ratings()
         return range(5-avg_rating)
+
+    def get_absolute_url(self):
+        return reverse('cards:card-detail', kwargs={'pk': self.pk})
 
 
 class CardRating(models.Model):

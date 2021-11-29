@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'apps.home_page',
     'apps.users',
     'apps.cards',
+    'fontawesome_free',
     'crispy_forms',
     'django.contrib.sites',
     'allauth',
