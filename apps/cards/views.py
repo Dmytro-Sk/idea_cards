@@ -13,6 +13,7 @@ class CardListView(ListView):
     model = Card
     context_object_name = 'cards'
     ordering = ['-pub_date']
+    paginate_by = 9
 
 
 class CardCreateView(LoginRequiredMixin, CreateView):
@@ -61,6 +62,7 @@ class UserCardListView(ListView):
     model = Card
     template_name = 'cards/user_cards.html'
     context_object_name = 'cards'
+    paginate_by = 9
 
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('username'))
