@@ -53,7 +53,7 @@
                             </li>
                         {% else %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{#{% url 'users:profile' %}#}">
+                                <a class="nav-link" href="{% url 'cards:user-cards' request.user %}">
                                     <span class="fas fa-user"></span>&nbsp;{{ request.user|capfirst }}
                                 </a>
                             </li>

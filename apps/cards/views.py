@@ -36,7 +36,7 @@ class CardUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     login_url = 'users:login'
 
     def form_valid(self, form):
-        form.instance.author = self.request.user
+        form.instance.author = form.instance.author
         return super().form_valid(form)
 
     def test_func(self):
@@ -53,7 +53,7 @@ class CardDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def test_func(self):
         post = self.get_object()
-        if self.request.user == post.author:
+        if any([self.request.user == post.author, self.request.user.is_superuser]):
             return True
         return False
 

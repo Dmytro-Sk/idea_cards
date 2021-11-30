@@ -23,7 +23,6 @@
             <div class="card-footer text-center">
                 {% if object.author == user or request.user.is_superuser %}
                     <a class="btn btn-outline-success btn-sm" href="{% url 'cards:card-update' card.id %}">Update</a>
-                {% elif object.author == user %}
                     <a class="btn btn-outline-danger btn-sm" href="{% url 'cards:card-delete' card.id %}">Delete</a>
                 {% endif %}
                 <a href="{% url 'cards:card-list' %}" class="btn btn-outline-secondary btn-sm">Back</a>
