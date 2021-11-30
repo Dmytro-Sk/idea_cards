@@ -16,6 +16,9 @@ class Card(models.Model):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        return reverse('cards:card-detail', kwargs={'pk': self.pk})
+
     def count_ratings(self):
         ratings = CardRating.objects.filter(card=self)
         return len(ratings)
@@ -26,17 +29,6 @@ class Card(models.Model):
             return round(statistics.mean([rating.stars for rating in ratings]))
         else:
             return 0
-
-    def get_star_avg_range(self):
-        avg_rating = self.get_avg_ratings()
-        return range(avg_rating)
-
-    def get_star_rest_range(self):
-        avg_rating = self.get_avg_ratings()
-        return range(5-avg_rating)
-
-    def get_absolute_url(self):
-        return reverse('cards:card-detail', kwargs={'pk': self.pk})
 
 
 class CardRating(models.Model):

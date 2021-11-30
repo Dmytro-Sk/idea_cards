@@ -4,10 +4,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'cards/css/styles.css' %}">
 {% endblock extra_style %}
 
-{% for _ in card.get_star_avg_range %}
-    <span class="fa fa-star checked"></span>
-{% endfor %}
-
-{% for _ in card.get_star_rest_range %}
-    <span class="fa fa-star"></span>
-{% endfor %}
+<span class="fa fa-star {% if card.get_avg_ratings > 0 %} checked {% endif %}"></span>
+<span class="fa fa-star {% if card.get_avg_ratings > 1 %} checked {% endif %}"></span>
+<span class="fa fa-star {% if card.get_avg_ratings > 2 %} checked {% endif %}"></span>
+<span class="fa fa-star {% if card.get_avg_ratings > 3 %} checked {% endif %}"></span>
+<span class="fa fa-star {% if card.get_avg_ratings > 4 %} checked {% endif %}"></span>
