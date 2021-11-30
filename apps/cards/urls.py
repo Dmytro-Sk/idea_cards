@@ -9,4 +9,5 @@ urlpatterns = [
     path('<int:pk>/detail/', views.CardDetailView.as_view(), name='card-detail'),
     path('<int:pk>/update', views.CardUpdateView.as_view(), name='card-update'),
     path('<int:pk>/delete/', views.CardDeleteView.as_view(), name='card-delete'),
+    path('user/<str:username>/', views.UserCardListView.as_view(), name='user-cards'),
 ]

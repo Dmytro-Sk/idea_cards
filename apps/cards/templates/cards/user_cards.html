@@ -1,5 +1,5 @@
 {% extends 'home_page/base.html' %}
-{% block title %}Cards{% endblock title%}
+{% block title %}User Cards{% endblock title%}
 
 {% block content %}
     <div class="d-flex justify-content-between py-3">
@@ -18,7 +18,7 @@
                     </div>
                     <div class="card-body row align-items-end">
                         <div class="d-flex justify-content-between text-muted">
-                            <a href="{% url 'cards:user-cards' card.author.username %}">
+                            <a href="{#{% url 'cards:user-cards' card.author.username %}#}">
                                 {{ card.author|capfirst }}
                             </a>
                             <small>{{ card.pub_date|date:' F d, Y' }}</small>

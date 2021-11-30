@@ -3,6 +3,8 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.detail import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 
 from .models import Card
 
@@ -53,3 +55,13 @@ class CardDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user == post.author:
             return True
         return False
+
+
+class UserCardListView(ListView):
+    model = Card
+    template_name = 'cards/user_cards.html'
+    context_object_name = 'cards'
+
+    def get_queryset(self):
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        return Card.objects.filter(author=user).order_by('-pub_date')
