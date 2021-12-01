@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.db.models import Avg
 
 from .models import Card, CardRating
 
@@ -10,7 +11,7 @@ from .models import Card, CardRating
 class CardListView(ListView):
     model = Card
     context_object_name = 'cards'
-    ordering = ['-pub_date']
+    ordering = ['?']
     paginate_by = 9
 
 
@@ -66,7 +67,6 @@ class CardDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 class UserCardListView(ListView):
     model = Card
-    template_name = 'cards/user_cards.html'
     context_object_name = 'cards'
     paginate_by = 9
 
@@ -95,3 +95,36 @@ class CardRatingView(LoginRequiredMixin, UserPassesTestMixin, RedirectView):
             else:
                 CardRating.objects.create(card_id=kwargs['pk'], star_from_user=user, stars=rating)
             return reverse('cards:card-detail', kwargs={'pk': kwargs['pk']})
+
+
+class SortCardListView(ListView):
+    model = Card
+    context_object_name = 'cards'
+    paginate_by = 9
+
+    def get_queryset(self):
+        filter_by = self.request.GET['filter']
+        cards_avg = Card.objects.annotate(average_stars=Avg('cardrating__stars'))
+        all_cards = Card.objects.all()
+        best_ideas = cards_avg.order_by('-average_stars')
+        worst_ideas = cards_avg.order_by('average_stars')
+        newest_cards = all_cards.order_by('-pub_date')
+        oldest_cards = all_cards.order_by('pub_date')
+        gt_one_star = cards_avg.filter(average_stars__gt=1)
+        gt_two_star = cards_avg.filter(average_stars__gt=2)
+        gt_three_star = cards_avg.filter(average_stars__gt=3)
+        gt_fore_star = cards_avg.filter(average_stars__gt=4)
+        eq_five_star = cards_avg.filter(average_stars=5)
+        filters = {
+            'best_ideas': best_ideas,
+            'worst_ideas': worst_ideas,
+            'newest_cards': newest_cards,
+            'oldest_cards': oldest_cards,
+            'gt_one_star': gt_one_star,
+            'gt_two_star': gt_two_star,
+            'gt_three_star': gt_three_star,
+            'gt_fore_star': gt_fore_star,
+            'eq_five_star': eq_five_star,
+        }
+        context = filters[filter_by]
+        return context
