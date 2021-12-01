@@ -10,4 +10,5 @@ urlpatterns = [
     path('<int:pk>/update', views.CardUpdateView.as_view(), name='card-update'),
     path('<int:pk>/delete/', views.CardDeleteView.as_view(), name='card-delete'),
     path('user/<str:username>/', views.UserCardListView.as_view(), name='user-cards'),
+    path('<int:pk>/add-rating/', views.CardRatingView.as_view(), name='add-rating'),
 ]

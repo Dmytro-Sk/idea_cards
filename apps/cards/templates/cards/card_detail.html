@@ -16,9 +16,14 @@
                     </a>
                     <small>{{ card.pub_date|date:' F d, Y' }}</small>
                 </div>
-                <div>
-                    <p>Average rating: {% include 'cards/avg_ratings.html' %}</p>
-                </div>
+                {% if card.rating_enable %}
+                    <div class="d-flex justify-content-start">
+                        <p>Average rating: {% include 'cards/avg_ratings.html' %}</p>
+                    </div>
+                    <div class="d-flex justify-content-start">
+                        <p>Your rating: {% include 'cards/add_ratings.html' %}</p>
+                    </div>
+                {% endif %}
             </div>
             <div class="card-footer text-center">
                 {% if object.author == user or request.user.is_superuser %}

@@ -1,3 +1,9 @@
 .checked {
   color: orange;
 }
+
+.my-btn {
+    background-color: inherit;
+    border: 0;
+    padding: 0;
+}

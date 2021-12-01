@@ -1,12 +1,10 @@
-from django.views.generic.list import ListView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.views.generic.detail import DetailView
+from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView, RedirectView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 
-from .models import Card
+from .models import Card, CardRating
 
 
 class CardListView(ListView):
@@ -29,6 +27,14 @@ class CardCreateView(LoginRequiredMixin, CreateView):
 class CardDetailView(DetailView):
     model = Card
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if str(self.request.user) != 'AnonymousUser':
+            user_review = CardRating.objects.filter(card_id=self.kwargs['pk'], star_from_user=self.request.user)
+            if user_review:
+                context['user_review'] = user_review.get().stars
+        return context
+
 
 class CardUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Card
@@ -40,8 +46,8 @@ class CardUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return super().form_valid(form)
 
     def test_func(self):
-        post = self.get_object()
-        if any([self.request.user == post.author, self.request.user.is_superuser]):
+        card = self.get_object()
+        if any([self.request.user == card.author, self.request.user.is_superuser]) and card.count_ratings() < 6:
             return True
         return False
 
@@ -52,8 +58,8 @@ class CardDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     login_url = 'users:login'
 
     def test_func(self):
-        post = self.get_object()
-        if any([self.request.user == post.author, self.request.user.is_superuser]):
+        card = self.get_object()
+        if any([self.request.user == card.author, self.request.user.is_superuser]):
             return True
         return False
 
@@ -67,3 +73,25 @@ class UserCardListView(ListView):
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('username'))
         return Card.objects.filter(author=user).order_by('-pub_date')
+
+
+class CardRatingView(LoginRequiredMixin, UserPassesTestMixin, RedirectView):
+    login_url = 'users:login'
+    redirect_field_name = 'home_page:home_page'
+
+    def test_func(self):
+        card = Card.objects.get(id=self.kwargs['pk'])
+        if any([self.request.user == card.author, self.request.user.is_superuser, card.rating_enable is False]):
+            return False
+        return True
+
+    def get_redirect_url(self, *args, **kwargs):
+        user_review = CardRating.objects.filter(card_id=self.kwargs['pk'], star_from_user=self.request.user)
+        user = self.request.user
+        if self.request.method == 'POST':
+            rating = self.request.POST['rating']
+            if user_review:
+                user_review.update(stars=rating)
+            else:
+                CardRating.objects.create(card_id=kwargs['pk'], star_from_user=user, stars=rating)
+            return reverse('cards:card-detail', kwargs={'pk': kwargs['pk']})
