@@ -4,6 +4,8 @@ from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Avg
+from rest_framework import viewsets
+from .serializers import CardSerializer, CardRatingSerializer
 
 from .models import Card, CardRating
 
@@ -11,7 +13,6 @@ from .models import Card, CardRating
 class CardListView(ListView):
     model = Card
     context_object_name = 'cards'
-    ordering = ['?']
     paginate_by = 9
 
 
@@ -128,3 +129,13 @@ class SortCardListView(ListView):
         }
         context = filters[filter_by]
         return context
+
+
+class CardAPIView(viewsets.ModelViewSet):
+    queryset = Card.objects.all()
+    serializer_class = CardSerializer
+
+
+class CardRatingAPIView(viewsets.ModelViewSet):
+    queryset = CardRating.objects.all()
+    serializer_class = CardRatingSerializer
