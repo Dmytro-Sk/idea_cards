@@ -17,6 +17,5 @@ urlpatterns = [
     path('<int:pk>/delete/', views.CardDeleteView.as_view(), name='card-delete'),
     path('user/<str:username>/', views.UserCardListView.as_view(), name='user-cards'),
     path('<int:pk>/add-rating/', views.CardRatingView.as_view(), name='add-rating'),
-    path('sortby/', views.SortCardListView.as_view(), name='card-sortby'),
     # path('api/', include(router.urls)),   # todo uncomment this line for use django REST API
 ]

@@ -9,28 +9,13 @@
         </div>
     </div>
 
-
-    <div class="col-2">
-        <form action="{% url 'cards:card-sortby' %}" method="get">
-            <select name="filter" class="form-select">
-                <option selected disabled>Choose</option>
-                <option value="best_ideas">Best ideas</option>
-                <option value="worst_ideas">Worst ideas</option>
-                <option value="newest_cards">Newest cards</option>
-                <option value="oldest_cards">Oldest cards</option>
-                <option value="gt_one_star">Greater than 1 star</option>
-                <option value="gt_two_star">Greater than 2 stars</option>
-                <option value="gt_three_star">Greater than 3 stars</option>
-                <option value="gt_fore_star">Greater than 4 stars</option>
-                <option value="eq_five_star">Equal 5 stars</option>
-            </select>
-            {% if request.GET.filter %}
-                <input type="hidden" name="next" value="{{ request.GET.filter }}">
-            {% endif %}
+    <div class="row">
+        <form class="col-auto" method="get">
+            {{ form }}
             <input type="submit" class="btn btn-outline-info mt-2" value="Apply filter">
+            <a href="{% url 'cards:card-list' %}"><input type="button" class="btn btn-outline-info mt-2" value="Reset filter"></a>
         </form>
     </div>
-
 
     <div class="row">
         {% for card in cards %}

@@ -1,4 +1,5 @@
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView, RedirectView
+from django.views.generic.edit import FormMixin
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404
@@ -8,12 +9,34 @@ from rest_framework import viewsets
 
 from .serializers import CardSerializer, CardRatingSerializer
 from .models import Card, CardRating
+from .forms import CardFilterForm
 
 
-class CardListView(ListView):
+class CardListView(FormMixin, ListView):
     model = Card
     context_object_name = 'cards'
     paginate_by = 9
+    form_class = CardFilterForm
+
+    def get_queryset(self):
+        if self.request.GET.get('filter'):
+            filter_by = self.request.GET.get('filter')
+            if filter_by == CardFilterForm.NEWEST_CARD:
+                return Card.objects.all().order_by('-pub_date')
+            elif filter_by == CardFilterForm.OLDEST_CARD:
+                return Card.objects.all().order_by('pub_date')
+            elif filter_by == CardFilterForm.BEST_IDEA:
+                return Card.objects.annotate(average_stars=Avg('cardrating__stars')).order_by('-average_stars')
+            elif filter_by == CardFilterForm.WORST_IDEA:
+                return Card.objects.annotate(average_stars=Avg('cardrating__stars')).order_by('average_stars')
+            elif filter_by[0] == '2':
+                stars = filter_by[-1]
+                return Card.objects.annotate(average_stars=Avg('cardrating__stars')).filter(average_stars__gt=stars)
+            elif filter_by[0] == '3':
+                stars = filter_by[-1]
+                return Card.objects.annotate(average_stars=Avg('cardrating__stars')).filter(average_stars=stars)
+        else:
+            return Card.objects.all().order_by('-pub_date')
 
 
 class CardCreateView(LoginRequiredMixin, CreateView):
@@ -96,39 +119,6 @@ class CardRatingView(LoginRequiredMixin, UserPassesTestMixin, RedirectView):
             else:
                 CardRating.objects.create(card_id=kwargs['pk'], star_from_user=user, stars=rating)
             return reverse('cards:card-detail', kwargs={'pk': kwargs['pk']})
-
-
-class SortCardListView(ListView):
-    model = Card
-    context_object_name = 'cards'
-    paginate_by = 9
-
-    def get_queryset(self):
-        filter_by = self.request.GET['filter']
-        cards_avg = Card.objects.annotate(average_stars=Avg('cardrating__stars'))
-        all_cards = Card.objects.all()
-        best_ideas = cards_avg.order_by('-average_stars')
-        worst_ideas = cards_avg.order_by('average_stars')
-        newest_cards = all_cards.order_by('-pub_date')
-        oldest_cards = all_cards.order_by('pub_date')
-        gt_one_star = cards_avg.filter(average_stars__gt=1)
-        gt_two_star = cards_avg.filter(average_stars__gt=2)
-        gt_three_star = cards_avg.filter(average_stars__gt=3)
-        gt_fore_star = cards_avg.filter(average_stars__gt=4)
-        eq_five_star = cards_avg.filter(average_stars=5)
-        filters = {
-            'best_ideas': best_ideas,
-            'worst_ideas': worst_ideas,
-            'newest_cards': newest_cards,
-            'oldest_cards': oldest_cards,
-            'gt_one_star': gt_one_star,
-            'gt_two_star': gt_two_star,
-            'gt_three_star': gt_three_star,
-            'gt_fore_star': gt_fore_star,
-            'eq_five_star': eq_five_star,
-        }
-        context = filters[filter_by]
-        return context
 
 
 class CardAPIView(viewsets.ModelViewSet):
