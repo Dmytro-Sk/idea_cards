@@ -6,19 +6,15 @@
 
 <form class="inline" action="{% url 'cards:add-rating' card.id %}" method="post">
     {% csrf_token %}
-    <button class="my-btn" name="rating" type="submit" value="1">
-        <i class="fas fa-star {% if user_review > 0 %} checked {% endif %} my-btn"></i>
-    </button>
-    <button class="my-btn" name="rating" type="submit" value="2">
-        <i class="fas fa-star {% if user_review > 1 %} checked {% endif %} my-btn"></i>
-    </button>
-    <button class="my-btn" name="rating" type="submit" value="3">
-        <i class="fas fa-star {% if user_review > 2 %} checked {% endif %} my-btn"></i>
-    </button>
-    <button class="my-btn" name="rating" type="submit" value="4">
-        <i class="fas fa-star {% if user_review > 3 %} checked {% endif %} my-btn"></i>
-    </button>
-    <button class="my-btn" name="rating" type="submit" value="5">
-        <i class="fas fa-star {% if user_review > 4 %} checked {% endif %} my-btn"></i>
-    </button>
+    {% for i in '12345'|make_list %}
+        {% if user_review >= i|add:'0' %}
+            <button class="my-btn" name="rating" type="submit" value="{{ i }}">
+                <i class="fas fa-star checked my-btn"></i>
+            </button>
+        {% else %}
+            <button class="my-btn" name="rating" type="submit" value="{{ i }}">
+                <i class="fas fa-star my-btn"></i>
+            </button>
+        {% endif %}
+    {% endfor %}
 </form>

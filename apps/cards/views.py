@@ -5,8 +5,8 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Avg
 from rest_framework import viewsets
-from .serializers import CardSerializer, CardRatingSerializer
 
+from .serializers import CardSerializer, CardRatingSerializer
 from .models import Card, CardRating
 
 

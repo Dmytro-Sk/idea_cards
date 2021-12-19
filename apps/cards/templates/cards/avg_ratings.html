@@ -4,8 +4,10 @@
     <link rel="stylesheet" type="text/css" href="{% static 'cards/css/styles.css' %}">
 {% endblock extra_style %}
 
-<span class="fa fa-star {% if card.get_avg_ratings > 0 %} checked {% endif %}"></span>
-<span class="fa fa-star {% if card.get_avg_ratings > 1 %} checked {% endif %}"></span>
-<span class="fa fa-star {% if card.get_avg_ratings > 2 %} checked {% endif %}"></span>
-<span class="fa fa-star {% if card.get_avg_ratings > 3 %} checked {% endif %}"></span>
-<span class="fa fa-star {% if card.get_avg_ratings > 4 %} checked {% endif %}"></span>
+{% for i in '12345'|make_list %}
+    {% if card.get_avg_ratings >= i|add:'0' %}
+        <i class="fas fa-star checked my-btn"></i>
+    {% else %}
+        <i class="fas fa-star my-btn"></i>
+    {% endif %}
+{% endfor %}
