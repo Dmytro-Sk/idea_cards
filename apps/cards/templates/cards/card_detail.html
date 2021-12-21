@@ -20,11 +20,9 @@
                     <div class="d-flex justify-content-start">
                         <p>Average rating: {% include 'cards/avg_ratings.html' %}</p>
                     </div>
-                    {% if request.user.is_authenticated %}
-                        <div class="d-flex justify-content-start">
-                            <p>Your rating: {% include 'cards/add_ratings.html' %}</p>
-                        </div>
-                    {% endif %}
+                    <div class="d-flex justify-content-start">
+                        <p>Your rating: {% include 'cards/add_ratings.html' %}</p>
+                    </div>
                 {% endif %}
             </div>
             <div class="card-footer text-center">

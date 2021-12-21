@@ -1,6 +1,6 @@
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView, RedirectView
 from django.views.generic.edit import FormMixin
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
@@ -93,7 +93,7 @@ class UserCardListView(CardListView):
 
 
 class CardRatingView(LoginRequiredMixin, UserPassesTestMixin, RedirectView):
-    redirect_field_name = 'home_page:home_page'
+    pattern_name = 'cards:card-detail'
 
     def test_func(self):
         card = Card.objects.get(id=self.kwargs['pk'])
@@ -102,15 +102,11 @@ class CardRatingView(LoginRequiredMixin, UserPassesTestMixin, RedirectView):
         return True
 
     def get_redirect_url(self, *args, **kwargs):
-        user_review = CardRating.objects.filter(card_id=self.kwargs['pk'], star_from_user=self.request.user)
-        user = self.request.user
         if self.request.method == 'POST':
+            user = self.request.user
             rating = self.request.POST['rating']
-            if user_review:
-                user_review.update(stars=rating)
-            else:
-                CardRating.objects.create(card_id=kwargs['pk'], star_from_user=user, stars=rating)
-            return reverse('cards:card-detail', kwargs={'pk': kwargs['pk']})
+            CardRating.objects.update_or_create(card_id=kwargs['pk'], star_from_user=user, defaults={'stars': rating})
+        return super().get_redirect_url(*args, **kwargs)
 
 
 class CardAPIView(viewsets.ModelViewSet):
