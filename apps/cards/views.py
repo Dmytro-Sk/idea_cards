@@ -1,6 +1,6 @@
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView, RedirectView
 from django.views.generic.edit import FormMixin
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
@@ -42,7 +42,6 @@ class CardListView(FormMixin, ListView):
 class CardCreateView(LoginRequiredMixin, CreateView):
     model = Card
     fields = ['title', 'body', 'rating_enable']
-    login_url = 'users:login'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -54,7 +53,7 @@ class CardDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        if str(self.request.user) != 'AnonymousUser':
+        if not self.request.user.is_anonymous:
             user_review = CardRating.objects.filter(card_id=self.kwargs['pk'], star_from_user=self.request.user)
             if user_review:
                 context['user_review'] = user_review.get().stars
@@ -64,7 +63,6 @@ class CardDetailView(DetailView):
 class CardUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Card
     fields = ['title', 'body', 'rating_enable']
-    login_url = 'users:login'
 
     def form_valid(self, form):
         form.instance.author = form.instance.author
@@ -80,7 +78,6 @@ class CardUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 class CardDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Card
     success_url = reverse_lazy('cards:card-list')
-    login_url = 'users:login'
 
     def test_func(self):
         card = self.get_object()
@@ -89,18 +86,13 @@ class CardDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return False
 
 
-class UserCardListView(ListView):
-    model = Card
-    context_object_name = 'cards'
-    paginate_by = 9
-
+class UserCardListView(CardListView):
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get('username'))
         return Card.objects.filter(author=user).order_by('-pub_date')
 
 
 class CardRatingView(LoginRequiredMixin, UserPassesTestMixin, RedirectView):
-    login_url = 'users:login'
     redirect_field_name = 'home_page:home_page'
 
     def test_func(self):
