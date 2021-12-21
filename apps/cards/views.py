@@ -1,7 +1,7 @@
 from django.views.generic import ListView, CreateView, DetailView, DeleteView, UpdateView, RedirectView
 from django.views.generic.edit import FormMixin
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Avg
@@ -65,7 +65,7 @@ class CardUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     fields = ['title', 'body', 'rating_enable']
 
     def form_valid(self, form):
-        form.instance.author = form.instance.author
+        form.instance.author = self.request.user
         return super().form_valid(form)
 
     def test_func(self):
